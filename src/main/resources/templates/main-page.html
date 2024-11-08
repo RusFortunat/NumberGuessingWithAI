@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en"  >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Number Guesser</title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+
+<body style="margin:30; padding:30">
+
+<h1>Welcome! Here we will have a number guesser</h1>
+
+<br>
+
+<h1>Draw your number here</h1>
+
+<br>
+
+<!-- Our Canvas that is written in JS; I took it from here: https://stackoverflow.com/a/30684711/24522071 -->
+<script style="margin:30">
+    // create canvas element and append it to document body
+    var canvas = document.createElement('canvas');
+    document.body.appendChild(canvas);
+
+    // some hotfixes... ( ≖_≖)
+    document.body.style.margin = 0;
+    canvas.style.position = 'fixed';
+
+    // to account for the canvas offset
+    var rect = canvas.getBoundingClientRect();
+
+    // get canvas 2D context and set him correct size;
+    // i will go with fixed size, for adaptive full-window-sized canvas check the link
+    var ctx = canvas.getContext('2d');
+    //resize();
+    ctx.canvas.width = 200; // 200px
+    ctx.canvas.height = 200;
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, 200, 200);
+
+    // last known position
+    var pos = { x: 0, y: 0 };
+
+    //window.addEventListener('resize', resize);
+    document.addEventListener('mousemove', draw);
+    document.addEventListener('mousedown', setPosition);
+    document.addEventListener('mouseenter', setPosition);
+
+    // new position from mouse event
+    function setPosition(e) {
+      pos.x = e.clientX - rect.left;
+      pos.y = e.clientY - rect.top;
+    }
+
+    // resize canvas
+    /*function resize() {
+      ctx.canvas.width = window.innerWidth;
+      ctx.canvas.height = window.innerHeight;
+    }*/
+
+    function draw(e) {
+      // mouse left button must be pressed
+      if (e.buttons !== 1) return;
+
+      ctx.beginPath(); // begin
+
+      ctx.lineWidth = 5;
+      ctx.lineCap = 'round';
+      //ctx.strokeStyle = '#c0392b';
+      ctx.strokeStyle = '#ffffff';
+
+      ctx.moveTo(pos.x, pos.y); // from
+      setPosition(e);
+      ctx.lineTo(pos.x, pos.y); // to
+
+      ctx.stroke(); // draw it!
+    }
+
+    function resetCanvas(){
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, 200, 200);
+    }
+
+    function prepareInput(){
+
+    }
+</script>
+
+<button type="reset" style="margin-top:220px; margin-left:10px"
+        onClick="resetCanvas()">Clear</button>
+
+<button type="submit" style="margin-top:220px; margin-left:70px"
+        onClick="${network.input} = resetCanvas()">Submit</button>
+
+<br>
+
+<h1>Answer: 2</h1>
+
+</body>
+</html>
