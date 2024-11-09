@@ -1,28 +1,55 @@
 <!DOCTYPE html>
-<html lang="en"  >
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Number Guesser</title>
     <link rel="stylesheet" href="/css/style.css" />
+
 </head>
 
 
 <body style="margin:30; padding:30">
 
-<h1>Welcome! Here we will have a number guesser</h1>
+<h1>Welcome! Here AI will try to guess your number</h1>
+
+<h3>Draw your number here</h3>
+
+<canvas id="myCanvas" width="280" height="280"></canvas>
+
+<button type="reset" style="margin-top:290px; margin-left:115px" onClick="resetCanvas()">Clear</button>
 
 <br>
 
-<h1>Draw your number here</h1>
+<form th:action="@{/}" th:object="${NNmodel}" method="POST">
 
-<br>
+    <h3 style="margin-left:-10px">Select the AI model:</h3>
+
+    <Label style="color:white;margin-left:-10px">
+        <input type="radio" th:field="${NNmodel.chosenModel}" th:value="PyTorch"/>PyTorch (95% accuracy)
+    </Label>
+    <Label style="color:white; margin-left:-10px">
+        <input type="radio" th:field="${NNmodel.chosenModel}" th:value="MyModel"/>My model (87% accuracy)
+    </Label>
+
+    <br><br>
+
+    <input type="hidden" th:id="testString" th:field="${NNmodel.testField}" />
+    <input type="hidden" th:id="passImageToServer" th:field="${NNmodel.rawInput}" />
+
+    <input type="submit" value="Submit" onClick="passImageData()" />
+
+</form>
+
+<h1>Answer: 2</h1>
+
+<p id="log"></p>
+
+</body>
 
 <!-- Our Canvas that is written in JS; I took it from here: https://stackoverflow.com/a/30684711/24522071 -->
-<script style="margin:30">
-    // create canvas element and append it to document body
-    var canvas = document.createElement('canvas');
-    document.body.appendChild(canvas);
+<script th:inline="javascript">
+    var canvas = document.getElementById('myCanvas');
 
     // some hotfixes... ( ≖_≖)
     document.body.style.margin = 0;
@@ -35,10 +62,10 @@
     // i will go with fixed size, for adaptive full-window-sized canvas check the link
     var ctx = canvas.getContext('2d');
     //resize();
-    ctx.canvas.width = 200; // 200px
-    ctx.canvas.height = 200;
+    ctx.canvas.width = 280; // px
+    ctx.canvas.height = 280;
     ctx.fillStyle = '#000000';
-    ctx.fillRect(0, 0, 200, 200);
+    ctx.fillRect(0, 0, 280, 280);
 
     // last known position
     var pos = { x: 0, y: 0 };
@@ -66,7 +93,7 @@
 
       ctx.beginPath(); // begin
 
-      ctx.lineWidth = 5;
+      ctx.lineWidth = 15;
       ctx.lineCap = 'round';
       //ctx.strokeStyle = '#c0392b';
       ctx.strokeStyle = '#ffffff';
@@ -80,23 +107,25 @@
 
     function resetCanvas(){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillRect(0, 0, 200, 200);
+        ctx.fillRect(0, 0, 280, 280);
     }
 
-    function prepareInput(){
+    function passImageData(){
+        //var context = document.getElementById('myCanvas').getContext('2d');
+        var context = canvas.getContext('2d');
+        // Get the CanvasPixelArray from the given coordinates and dimensions.
+        var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+        //_log(3);
+        var pix = imgData.data;
+        var grayScaleInput = [];
+        for (var i = 0, n = pix.length; i < n; i += 4) {
+            grayScaleInput[i/4] = (pix[i] + pix[i+1] + pix[i+2]) / (255.0*3) // rgb channel, and 4th element is 'alpha'
+        }
 
+        //var test = ["1","2"];
+        document.getElementById('testString').value = "js sucks balls";
+        document.getElementById('passImageToServer').value = grayScaleInput;
     }
 </script>
 
-<button type="reset" style="margin-top:220px; margin-left:10px"
-        onClick="resetCanvas()">Clear</button>
-
-<button type="submit" style="margin-top:220px; margin-left:70px"
-        onClick="${network.input} = resetCanvas()">Submit</button>
-
-<br>
-
-<h1>Answer: 2</h1>
-
-</body>
 </html>
