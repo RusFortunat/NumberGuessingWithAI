@@ -17,32 +17,37 @@
 
 <canvas id="myCanvas" width="280" height="280" ></canvas>
 
-<button type="reset" style="margin-top:290px; margin-left:115px" onClick="resetCanvas()">Clear</button>
+<button type="reset"
+        style="margin-top:290px; margin-left:115px; font-size: 18px"
+        onClick="resetCanvas()">Clear</button>
 
 <br>
 
-<h3 style="margin-left:-10px">Select the AI model:</h3>`
-
 <form th:action="@{/}" method="POST">
 
-    <Label style="color:white;margin-left:-10px">
-        <input type="radio" th:field="${NeuralNetwork.chosenNetworkModel}" th:value="PyTorch"/>PyTorch (95% accuracy)
+    <h3 style="margin-left:-5px">Select the AI model:</h3>`
+
+    <Label style="color:white;margin-left:-20px;font-size: 18px">
+        <input type="radio" th:field="${NeuralNetwork.chosenNetworkModel}" th:value="PyTorch"/>PyTorch (91% accuracy)
     </Label>
-    <Label style="color:white; margin-left:-10px">
+    <Label style="color:white; margin-left:0px;font-size: 18px">
         <input type="radio" th:field="${NeuralNetwork.chosenNetworkModel}" th:value="MyModel"/>My model (89% accuracy)
     </Label>
 
     <br><br>
 
-    <input type="hidden" th:id="passPixelsToServer" th:field="${DrawnImage.rawPixelInput}" />
+    <input type="hidden" th:id="passPixelsToServer" th:field="${DrawnImages.rawPixelInput}" />
 
-    <input type="submit" value="Submit" onClick="passImageData()" />
+    <input type="submit" style="font-size: 18px" value="Submit" onClick="passImageData()" />
 
 </form>
 
 <h1>Answer:<span th:text="${NeuralNetwork.answer}" /> </h1>
 
-<p id="log"></p>
+<p style="color: white; font-size: 18px">
+    Note that we are saving all submitted images for further<br>
+    training of our neural networks. So be careful with what you draw ;)
+</p>
 
 </body>
 

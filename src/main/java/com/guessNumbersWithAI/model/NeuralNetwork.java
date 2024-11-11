@@ -1,12 +1,14 @@
-// No training will be done here. The neural network parameters will be simply loaded from the text file.
-// I will provide two options to the user: to load parameters of NN that I've trained myself in my other
-// project, or to load parameters that have been obtained from use of state-of-art PyTorch machine learning package.
-// If you are interested in how I trained the neural network, check out this project:
-// https://github.com/RusFortunat/java_ML_library
+// I will not be training the neural networks here, but will simply upload their parameters from file.
+// The first trained neural network model was obtained with PyTorch machine learning package, and the
+// second one was obtained by me writing the whole supervised learning machinery in Java from scratch.
+// If you are interested in how I trained these two neural networks, check out this project:
+// My implementation from scratch in Java: https://github.com/RusFortunat/java_ML_library
+// Python PyTorch and my C++ implementation: https://github.com/RusFortunat/alternative-ML-lib-C2plus
 
 package com.guessNumbersWithAI.model;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class NeuralNetwork {
@@ -28,14 +30,14 @@ public class NeuralNetwork {
     private int answer;
 
 
-    // I will let the user load the parameters from the MySQL DB
+    // I will let the user to choose which neural network to use and load parameters later
     public NeuralNetwork() {
 
         this.chosenNetworkModel = "";
 
-        this.inputSize = 28*28;
-        this.hiddenSize = 256;
-        this.outputSize = 10;
+        this.inputSize = 28*28; // MNIST training images are of 28x28 pixel size
+        this.hiddenSize = 256; // arbitrary, should not be too small or too big
+        this.outputSize = 10; // 0-9 digits that network will be guessing
         this.firstLayerWeights = new double[hiddenSize][inputSize];
         this.firstLayerBiases = new double[hiddenSize];
         this.secondLayerWeights = new double[outputSize][hiddenSize];
@@ -51,7 +53,7 @@ public class NeuralNetwork {
             // specify filename for the model that user selected
             String filename = "";
             if(chosenNetworkModel.equals("PyTorch")){
-                filename = "src/main/resources/net_params_size784_256_10_lr0.001_trainEps100.txt";
+                filename = "src/main/resources/saved_params.txt";
             }else if(chosenNetworkModel.equals("MyModel")){
                 filename = "src/main/resources/net_params_size784_256_10_lr0.001_trainEps100.txt";
             }
@@ -104,7 +106,6 @@ public class NeuralNetwork {
                 }
             }
             reader.close();
-            //System.out.println("network parameters are loaded");
 
         }catch(Exception e){
             System.out.println(e.getMessage());
@@ -182,4 +183,34 @@ public class NeuralNetwork {
     public void setAnswer(int answer) {
         this.answer = answer;
     }
+
+    // printers, for debug purposes
+    public void printNetworkParameteres(){
+        System.out.println("firstLayerWeights:");
+        for(int i = 0; i < hiddenSize; i++){
+            for(int j = 0; j < inputSize; j++) {
+                System.out.print(firstLayerWeights[i][j] + " ");
+            }
+            System.out.println("");
+        }
+        System.out.println("\nfirstLayerBiases:");
+        for(int i = 0; i < hiddenSize; i++){
+            System.out.print(firstLayerBiases[i] + " ");
+        }
+        System.out.println("");
+
+        System.out.println("\nsecondLayerWeights:");
+        for(int i = 0; i < outputSize; i++){
+            for(int j = 0; j < hiddenSize; j++) {
+                System.out.print(secondLayerWeights[i][j] + " ");
+            }
+            System.out.println("");
+        }
+        System.out.println("\nsecondLayerBiases:");
+        for(int i = 0; i < outputSize; i++){
+            System.out.print(secondLayerBiases[i] + " ");
+        }
+        System.out.println("\n");
+    }
+
 }
