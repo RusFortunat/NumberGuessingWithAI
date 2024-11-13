@@ -30,12 +30,7 @@ public class ViewController {
                                     @ModelAttribute("DrawnImages") DrawnImages drawnImages){
 
         // load network parameters from the file
-        if(!ourNeuralNetwork.getChosenNetworkModel().isEmpty()){
-            ourNeuralNetwork.loadNetworkParameters();
-            //ourNeuralNetwork.printNetworkParameteres();
-        }else{
-            System.out.println("Wrong model filename!");
-        }
+        ourNeuralNetwork.loadNetworkParameters();
 
         // create input vector by processing raw pixel image data; we turn 280x280 px image into 28x28 px image
         double[] inputVector = drawnImages.processRawInput();

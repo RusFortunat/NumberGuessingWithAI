@@ -17,14 +17,12 @@
 
 <canvas id="myCanvas" width="280" height="280" ></canvas>
 
-<button type="reset"
-        style="margin-top:290px; margin-left:115px; font-size: 18px"
-        onClick="resetCanvas()">Clear</button>
-
 <br>
 
 <form th:action="@{/}" method="POST">
 
+    <!-- I'm still working on this feature. There are some problems with properly extracting PyTorch
+         neural network parameters
     <h3 style="margin-left:-5px">Select the AI model:</h3>`
 
     <Label style="color:white;margin-left:-20px;font-size: 18px">
@@ -35,10 +33,17 @@
     </Label>
 
     <br><br>
+    -->
 
     <input type="hidden" th:id="passPixelsToServer" th:field="${DrawnImages.rawPixelInput}" />
 
-    <input type="submit" style="font-size: 18px" value="Submit" onClick="passImageData()" />
+    <input type="submit"
+           style="font-size: 18px; margin-top:280px; margin-left:25px"
+           value="Submit" onClick="passImageData()" />
+
+    <button type="reset"
+            style="margin-top:10px; margin-left:65px; font-size: 18px"
+            onClick="resetCanvas()">Clear</button>
 
 </form>
 
