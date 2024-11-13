@@ -7,11 +7,8 @@
 
 package com.guessNumbersWithAI.model;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
-import java.net.URL;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class NeuralNetwork {
@@ -102,7 +99,7 @@ public class NeuralNetwork {
 
 
     // loads the parameters of the chosen network
-    public void loadNetworkParameters(File networkParamsFile) throws Exception{
+    public void loadNetworkParameters(InputStream networkParamsFile) throws Exception{
 
         Scanner reader = new Scanner(networkParamsFile);
 

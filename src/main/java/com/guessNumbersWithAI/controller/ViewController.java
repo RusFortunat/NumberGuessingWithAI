@@ -5,16 +5,19 @@ import com.guessNumbersWithAI.model.NeuralNetwork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 @Controller
@@ -43,10 +46,12 @@ public class ViewController {
 
         try{
             // load network parameters from the file
-            Resource resource=resourceLoader.getResource(
+            /*Resource resource=resourceLoader.getResource(
+                    "classpath:net_params_size784_256_10_lr0.001_trainEps100.txt");*/
+            Resource resource= resourceLoader.getResource(
                     "classpath:net_params_size784_256_10_lr0.001_trainEps100.txt");
-            File file = resource.getFile();
-            ourNeuralNetwork.loadNetworkParameters(file);
+            InputStream inputStream = resource.getInputStream();
+            ourNeuralNetwork.loadNetworkParameters(inputStream);
 
             // create input vector by processing raw pixel image data; we turn 280x280 px image into 28x28 px image
             double[] inputVector = drawnImages.processRawInput();
