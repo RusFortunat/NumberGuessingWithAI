@@ -47,7 +47,7 @@ public class NeuralNetwork {
 
     // Forward propagation: the neural network gets user image input, that is converted to the input vector
     // and returns as an output the probabilities for different numbers
-    public void forward(double[] input){
+    public void forward(double[] input) throws RuntimeException{
         // forward propagation is not that hard, just do the following:
         // 1. Take matrix product and add biases [z] = [firstLayerWeights]*[input] + [firstLayerBiases];
         // 2. Obtain hidden activation values [y] by applying to [z] some activation function f([z]), i.e., mapping.
@@ -99,71 +99,65 @@ public class NeuralNetwork {
 
 
     // loads the parameters of the chosen network
-    public void loadNetworkParameters(){
+    public void loadNetworkParameters() throws Exception{
 
-        try{
+        // specify filename for the model that user selected
+        String filename = "src/main/resources/net_params_size784_256_10_lr0.001_trainEps100.txt";
+        // working on it
+        /*if(chosenNetworkModel.equals("PyTorch")){
+            filename = "src/main/resources/PyTorch_params.txt";
+        }else if(chosenNetworkModel.equals("MyModel")){
+            filename = "src/main/resources/net_params_size784_256_10_lr0.001_trainEps100.txt";
+        }*/
 
-            // specify filename for the model that user selected
-            String filename = "src/main/resources/net_params_size784_256_10_lr0.001_trainEps100.txt";
-            // working on it
-            /*if(chosenNetworkModel.equals("PyTorch")){
-                filename = "src/main/resources/PyTorch_params.txt";
-            }else if(chosenNetworkModel.equals("MyModel")){
-                filename = "src/main/resources/net_params_size784_256_10_lr0.001_trainEps100.txt";
-            }*/
+        // load the file
+        File networkParamsFile = new File(filename);
+        Scanner reader = new Scanner(networkParamsFile);
 
-            // load the file
-            File networkParamsFile = new File(filename);
-            Scanner reader = new Scanner(networkParamsFile);
+        // read the file data
+        while(reader.hasNextLine()){
 
-            // read the file data
-            while(reader.hasNextLine()){
+            // skip metadata
+            for(int skip = 0; skip < 4; skip++) reader.nextLine();
 
-                // skip metadata
-                for(int skip = 0; skip < 4; skip++) reader.nextLine();
-
-                // load first layer weights
-                String firstLayerWeightsStr = reader.nextLine();
-                String[] firstLrWeightsStr = firstLayerWeightsStr.split(",");
-                for(int i = 0; i < hiddenSize; i++){
-                    for(int j = 0; j < inputSize; j++) {
-                        int index = i*inputSize + j;
-                        this.firstLayerWeights[i][j] = Double.valueOf(firstLrWeightsStr[index]);
-                    }
-                }
-
-                // load first layer biases
-                for(int skip = 0; skip < 2; skip++) reader.nextLine();
-                String firstLayerBiasesStr = reader.nextLine();
-                String[] firstLrBiasesStr = firstLayerBiasesStr.split(",");
-                for(int i = 0; i < hiddenSize; i++){
-                    firstLayerBiases[i] = Double.valueOf(firstLrBiasesStr[i]);
-                }
-
-                // load second layer weights
-                for(int skip = 0; skip < 2; skip++) reader.nextLine();
-                String secondLayerWeightsStr = reader.nextLine();
-                String[] secondLrWeightsStr = secondLayerWeightsStr.split(",");
-                for(int i = 0; i < outputSize; i++){
-                    for(int j = 0; j < hiddenSize; j++) {
-                        int index = i*hiddenSize + j;
-                        this.secondLayerWeights[i][j] = Double.valueOf(secondLrWeightsStr[index]);
-                    }
-                }
-
-                // load first layer biases
-                for(int skip = 0; skip < 2; skip++) reader.nextLine();
-                String secondLayerBiasesStr = reader.nextLine();
-                String[] secondLrBiasesStr = secondLayerBiasesStr.split(",");
-                for(int i = 0; i < outputSize; i++){
-                    secondLayerBiases[i] = Double.valueOf(secondLrBiasesStr[i]);
+            // load first layer weights
+            String firstLayerWeightsStr = reader.nextLine();
+            String[] firstLrWeightsStr = firstLayerWeightsStr.split(",");
+            for(int i = 0; i < hiddenSize; i++){
+                for(int j = 0; j < inputSize; j++) {
+                    int index = i*inputSize + j;
+                    this.firstLayerWeights[i][j] = Double.valueOf(firstLrWeightsStr[index]);
                 }
             }
-            reader.close();
 
-        }catch(Exception e){
-            System.out.println(e.getMessage());
+            // load first layer biases
+            for(int skip = 0; skip < 2; skip++) reader.nextLine();
+            String firstLayerBiasesStr = reader.nextLine();
+            String[] firstLrBiasesStr = firstLayerBiasesStr.split(",");
+            for(int i = 0; i < hiddenSize; i++){
+                firstLayerBiases[i] = Double.valueOf(firstLrBiasesStr[i]);
+            }
+
+            // load second layer weights
+            for(int skip = 0; skip < 2; skip++) reader.nextLine();
+            String secondLayerWeightsStr = reader.nextLine();
+            String[] secondLrWeightsStr = secondLayerWeightsStr.split(",");
+            for(int i = 0; i < outputSize; i++){
+                for(int j = 0; j < hiddenSize; j++) {
+                    int index = i*hiddenSize + j;
+                    this.secondLayerWeights[i][j] = Double.valueOf(secondLrWeightsStr[index]);
+                }
+            }
+
+            // load first layer biases
+            for(int skip = 0; skip < 2; skip++) reader.nextLine();
+            String secondLayerBiasesStr = reader.nextLine();
+            String[] secondLrBiasesStr = secondLayerBiasesStr.split(",");
+            for(int i = 0; i < outputSize; i++){
+                secondLayerBiases[i] = Double.valueOf(secondLrBiasesStr[i]);
+            }
         }
+        reader.close();
     }
 
     // getters and setters

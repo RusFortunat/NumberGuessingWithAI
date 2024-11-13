@@ -1,0 +1,1 @@
+2024-11-13T16:03:24.015+01:00 ERROR 16956 --- [guessNumbersWithAI] [http-nio-8080-exec-3] c.g.controller.ViewController            : src\main\resources\net_params_size784_256_10_lr0.001_trainEps1002.txt (The system cannot find the file specified)

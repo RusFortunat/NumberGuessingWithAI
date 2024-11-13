@@ -10,4 +10,6 @@ class GuessNumbersWithAiApplicationTests {
 	void contextLoads() {
 	}
 
+    // test to check if the new image has been added to DB
+
 }
