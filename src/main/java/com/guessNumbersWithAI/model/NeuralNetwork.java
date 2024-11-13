@@ -72,8 +72,7 @@ public class NeuralNetwork {
             double sum = 0;
             for(int j = 0; j < hiddenSize; j++){
                 double activation = secondLayerWeights[i][j]*hiddenVector[j] + secondLayerBiases[i];
-                if(activation > 0) sum+= activation; // ReLU activation
-                //sum+= activation; // no relu on output values
+                sum+= activation; // no relu on output values
             }
             outputVector[i] = sum;
             totalSum += Math.exp(sum);
