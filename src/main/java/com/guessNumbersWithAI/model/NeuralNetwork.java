@@ -7,7 +7,10 @@
 
 package com.guessNumbersWithAI.model;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -99,19 +102,8 @@ public class NeuralNetwork {
 
 
     // loads the parameters of the chosen network
-    public void loadNetworkParameters() throws Exception{
+    public void loadNetworkParameters(File networkParamsFile) throws Exception{
 
-        // specify filename for the model that user selected
-        String filename = "src/main/resources/net_params_size784_256_10_lr0.001_trainEps100.txt";
-        // working on it
-        /*if(chosenNetworkModel.equals("PyTorch")){
-            filename = "src/main/resources/PyTorch_params.txt";
-        }else if(chosenNetworkModel.equals("MyModel")){
-            filename = "src/main/resources/net_params_size784_256_10_lr0.001_trainEps100.txt";
-        }*/
-
-        // load the file
-        File networkParamsFile = new File(filename);
         Scanner reader = new Scanner(networkParamsFile);
 
         // read the file data
