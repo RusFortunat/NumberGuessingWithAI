@@ -13,7 +13,7 @@ import java.util.ArrayList;
 @Controller
 public class ViewController {
 
-    @GetMapping("/")
+    @GetMapping("/write-number")
     public String hangleGetMapping(Model theModel){
 
         NeuralNetwork ourNeuralNetwork = new NeuralNetwork();
@@ -25,7 +25,7 @@ public class ViewController {
         return "main-view";
     }
 
-    @PostMapping("/")
+    @PostMapping("/write-number")
     public String hanglePostMapping(@ModelAttribute("NeuralNetwork") NeuralNetwork ourNeuralNetwork,
                                     @ModelAttribute("DrawnImages") DrawnImages drawnImages){
 
