@@ -25,7 +25,7 @@ public class ViewController {
         return "main-view";
     }
 
-    @PostMapping("/write-number")
+    @PostMapping("/write-number-result")
     public String hanglePostMapping(@ModelAttribute("NeuralNetwork") NeuralNetwork ourNeuralNetwork,
                                     @ModelAttribute("DrawnImages") DrawnImages drawnImages){
 
