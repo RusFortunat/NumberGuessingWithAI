@@ -2,6 +2,9 @@
 
 A Spring Boot MVC web application that uses a pre-trained neural network to guess handwritten numbers that user provides. Click [here](https://number-guessing-app-c2a0dae4c4g0cxas.westeurope-01.azurewebsites.net/write-number) to try it out.
 
+![Short demo:](https://github.com/RusFortunat/NumberGuessingWithAI/blob/main/src/main/resources/media/demo.gif)
+
+# Description
 
 ## Model
 
