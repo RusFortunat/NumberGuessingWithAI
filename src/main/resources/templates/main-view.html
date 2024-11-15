@@ -80,7 +80,7 @@
             let cssClass = text1.concat(ID); // i need to have different dynamic css classes
             let text2 = dot.concat(cssClass, ' { opacity: ');
             var opacityLevel = opacities[i];
-            let result = text2.concat(opacityLevel, '; color: white; font-size: 40px; }');
+            let result = text2.concat(opacityLevel, '; color: white; font-size: 32px; }');
             style.innerHTML = result;
             document.getElementsByTagName('span')[i].appendChild(style);
 
@@ -93,64 +93,50 @@
 
 <!-- Our Canvas -->
 <script th:inline="javascript">
-    var canvas = document.getElementById('myCanvas');
 
-    // some hotfixes... ( ≖_≖)
+    var canvas = document.getElementById('myCanvas');
     document.body.style.margin = 0;
-    //canvas.style.position = 'fixed';
 
     // to account for the canvas offset
     var rect = canvas.getBoundingClientRect();
 
     // get canvas 2D context and set him correct size;
-    // i will go with fixed size, for adaptive full-window-sized canvas check the link
-    var ctx = canvas.getContext('2d');
-    //resize();
-    ctx.canvas.width = 280; // px
-    ctx.canvas.height = 280;
-    ctx.fillStyle = '#000000';
-    ctx.fillRect(0, 0, 280, 280);
+    var context = canvas.getContext('2d');
+    context.canvas.width = 280; // px
+    context.canvas.height = 280;
+    context.fillStyle = '#000000';
+    context.fillRect(0, 0, 280, 280);
+    context.lineWidth = 20;
+    context.lineCap = 'round';
+    context.strokeStyle = '#ffffff';
 
-    // last known position
-    var pos = { x: 0, y: 0 };
-
-    //window.addEventListener('resize', resize);
-    document.addEventListener('mousemove', draw);
-    document.addEventListener('mousedown', setPosition);
-    document.addEventListener('mouseenter', setPosition);
-    // for mobile
-    document.addEventListener('touchend', draw);
-    document.addEventListener('touchend', setPosition);
-    document.addEventListener('touchend', setPosition);
-
-    // new position from mouse event
-    function setPosition(e) {
-      pos.x = e.pageX - rect.left;
-      pos.y = e.pageY - rect.top ;
+    var isIdle = true;
+    function drawstart(event) {
+        context.beginPath();
+        context.moveTo(event.pageX - canvas.offsetLeft, event.pageY - canvas.offsetTop);
+        isIdle = false;
     }
-
-    // resize canvas
-    /*function resize() {
-      ctx.canvas.width = window.innerWidth;
-      ctx.canvas.height = window.innerHeight;
-    }*/
-
-    function draw(e) {
-      // mouse left button must be pressed
-      if (e.buttons !== 1) return;
-
-      ctx.beginPath(); // begin
-
-      ctx.lineWidth = 20;
-      ctx.lineCap = 'round';
-      ctx.strokeStyle = '#ffffff';
-
-      ctx.moveTo(pos.x, pos.y); // from
-      setPosition(e);
-      ctx.lineTo(pos.x, pos.y); // to
-
-      ctx.stroke(); // draw it!
+    function drawmove(event) {
+        if (isIdle) return;
+        context.lineTo(event.pageX - canvas.offsetLeft, event.pageY - canvas.offsetTop);
+        context.stroke();
     }
+    function drawend(event) {
+        if (isIdle) return;
+        drawmove(event);
+        isIdle = true;
+    }
+    function touchstart(event) { drawstart(event.touches[0]) }
+    function touchmove(event) { drawmove(event.touches[0]); event.preventDefault(); }
+    function touchend(event) { drawend(event.changedTouches[0]) }
+
+    canvas.addEventListener('touchstart', touchstart, false);
+    canvas.addEventListener('touchmove', touchmove, false);
+    canvas.addEventListener('touchend', touchend, false);
+
+    canvas.addEventListener('mousedown', drawstart, false);
+    canvas.addEventListener('mousemove', drawmove, false);
+    canvas.addEventListener('mouseup', drawend, false);
 
     function resetCanvas(){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
