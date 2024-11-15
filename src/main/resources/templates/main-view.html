@@ -25,7 +25,7 @@
 
 <button type="reset"
         style="margin-top:10px; margin-left:55px; font-size: 18px"
-        onClick="resetCanvas()">Clear</button>
+        onClick="clearCanvasAndAnswer()">Clear</button>
 
 <div id="myAnswerHolder"></div>
 
@@ -138,9 +138,11 @@
     canvas.addEventListener('mousemove', drawmove, false);
     canvas.addEventListener('mouseup', drawend, false);
 
-    function resetCanvas(){
+    function clearCanvasAndAnswer(){
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.fillRect(0, 0, 280, 280);
+        const myNode = document.getElementById("myAnswerHolder");
+        myNode.innerHTML = '';
     }
 </script>
 
