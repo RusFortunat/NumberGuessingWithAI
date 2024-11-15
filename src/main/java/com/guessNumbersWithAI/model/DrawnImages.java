@@ -6,14 +6,16 @@ import java.util.Arrays;
 
 public class DrawnImages {
 
-    private ArrayList<Double> rawPixelInput;
+    private double[] rawPixelInput;
     private double[] inputVector;
 
-    public DrawnImages(){
-        this.rawPixelInput = new ArrayList<>();
+    public DrawnImages(String rawImageData){
+
+        String[] rawData = rawImageData.split(",");
+        rawPixelInput = Arrays.stream(rawData).mapToDouble(Double::parseDouble).toArray();
+
         inputVector = new double[28*28]; // MNIST training dataset consists of 28x28 pixel images.
     }
-
 
     // compress 280x280 pixel image to 28x28 one
     public double[] processRawInput(){
@@ -32,7 +34,7 @@ public class DrawnImages {
                         // new pixel is an average of 100 pixels in 10x10 square
                         int index = 280 * (10 * Y + y) + 10 * X + x;
 
-                        avergePixelValue += rawPixelInput.get(index) / 100.0;
+                        avergePixelValue += rawPixelInput[index] / 100.0;
                     }
                 }
 
@@ -121,15 +123,5 @@ public class DrawnImages {
         }
 
         return conn;
-    }
-
-    // getters and setters
-
-    public ArrayList<Double> getRawPixelInput() {
-        return rawPixelInput;
-    }
-
-    public void setRawPixelInput(ArrayList<Double> rawPixelInput) {
-        this.rawPixelInput = rawPixelInput;
     }
 }

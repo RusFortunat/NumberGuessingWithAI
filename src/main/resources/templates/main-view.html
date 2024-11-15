@@ -19,50 +19,85 @@
 
 <br>
 
-<form th:action="@{/write-number}" method="POST">
+<input type="button"
+       style="font-size: 18px; margin-top:20px; margin-left:45px"
+       value="Submit" onClick="getAnswer()"></input>
 
-    <!-- I'm still working on this feature. There are some problems with properly extracting PyTorch
-         neural network parameters
-    <h3 style="margin-left:-5px">Select the AI model:</h3>`
+<button type="reset"
+        style="margin-top:10px; margin-left:55px; font-size: 18px"
+        onClick="resetCanvas()">Clear</button>
 
-    <Label style="color:white;margin-left:-20px;font-size: 18px">
-        <input type="radio" th:field="${NeuralNetwork.chosenNetworkModel}" th:value="PyTorch"/>PyTorch (91% accuracy)
-    </Label>
-    <Label style="color:white; margin-left:0px;font-size: 18px">
-        <input type="radio" th:field="${NeuralNetwork.chosenNetworkModel}" th:value="MyModel"/>My model (89% accuracy)
-    </Label>
+<div id="myAnswerHolder"></div>
 
-    <br><br>
-    -->
-
-    <input type="hidden" th:id="passPixelsToServer" th:field="${DrawnImages.rawPixelInput}" />
-
-    <input type="submit"
-           style="font-size: 18px; margin-top:280px; margin-left:25px"
-           value="Submit" onClick="passImageData()" />
-
-    <button type="reset"
-            style="margin-top:10px; margin-left:65px; font-size: 18px"
-            onClick="resetCanvas()">Clear</button>
-
-</form>
-
-<h1>Answer:<span th:text="${NeuralNetwork.answer}" /> </h1>
-
-<p style="color: white; font-size: 18px">
+<p style="color: white; font-size: 24px">
     Note that we are saving all submitted images for further<br>
     training of our neural networks. So be careful with what you draw ;)
 </p>
 
 </body>
 
-<!-- Our Canvas that is written in JS; I took it from here: https://stackoverflow.com/a/30684711/24522071 -->
+<!-- AJAX part that sends image data to server and gets answer -->
+<script th:inline="javascript">
+    const getAnswer = () => {
+
+        var canvas = document.getElementById('myCanvas');
+        var context = canvas.getContext('2d');
+        var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+        var pix = imgData.data;
+        var grayScaleInput = []; // convert rgb input to grayscale image
+        for (var i = 0, n = pix.length; i < n; i += 4) {
+            grayScaleInput[i/4] = (pix[i] + pix[i+1] + pix[i+2]) / (255.0*3) // 4th element is 'alpha'
+        }
+
+        let buffer = grayScaleInput.toString(grayScaleInput);
+
+        fetch('getAnswerFromServer', {
+            method:'post',
+            body : buffer
+        }).then(function (response) {
+            return response.text();
+        }).then(function (html) {
+            console.log(html)
+            document.getElementById("myAnswerHolder").innerHTML = html;
+            setOpacity();
+        }).catch(function (err) {
+            console.warn('Something went wrong.', err);
+        });
+    }
+</script>
+
+<!-- Change opacities -- the brighter it is, the more confident is the network about the answer -->
+<script th:inline="javascript">
+    function setOpacity() {
+        var output = document.getElementById("outputVector").value;
+        var opacities = output.split(",");
+        for(var i = 0; i < opacities.length; i++){
+            var style = document.createElement('style');
+            style.type = 'text/css';
+            let dot = '.';
+            let text1 = 'cssClass'
+            let ID = String(i);
+            let cssClass = text1.concat(ID); // i need to have different dynamic css classes
+            let text2 = dot.concat(cssClass, ' { opacity: ');
+            var opacityLevel = opacities[i];
+            let result = text2.concat(opacityLevel, '; color: white; font-size: 40px; }');
+            style.innerHTML = result;
+            document.getElementsByTagName('span')[i].appendChild(style);
+
+            let spans = 'sp';
+            let spansID = spans.concat(ID);
+            document.getElementById(spansID).className = cssClass;
+        }
+    };
+</script>
+
+<!-- Our Canvas -->
 <script th:inline="javascript">
     var canvas = document.getElementById('myCanvas');
 
     // some hotfixes... ( ≖_≖)
     document.body.style.margin = 0;
-    canvas.style.position = 'fixed';
+    //canvas.style.position = 'fixed';
 
     // to account for the canvas offset
     var rect = canvas.getBoundingClientRect();
@@ -86,8 +121,8 @@
 
     // new position from mouse event
     function setPosition(e) {
-      pos.x = e.clientX - rect.left;
-      pos.y = e.clientY - rect.top;
+      pos.x = e.pageX - rect.left;
+      pos.y = e.pageY - rect.top ;
     }
 
     // resize canvas
@@ -116,19 +151,6 @@
     function resetCanvas(){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillRect(0, 0, 280, 280);
-    }
-
-    function passImageData(){
-        var context = canvas.getContext('2d');
-        // Get the CanvasPixelArray from the given coordinates and dimensions.
-        var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
-        var pix = imgData.data;
-        var grayScaleInput = [];
-        for (var i = 0, n = pix.length; i < n; i += 4) {
-            grayScaleInput[i/4] = (pix[i] + pix[i+1] + pix[i+2]) / (255.0*3) // rgb channel, and 4th element is 'alpha'
-        }
-
-        document.getElementById('passPixelsToServer').value = grayScaleInput;
     }
 </script>
 

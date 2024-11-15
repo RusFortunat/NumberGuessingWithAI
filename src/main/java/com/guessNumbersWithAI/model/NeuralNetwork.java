@@ -1,9 +1,7 @@
 // I will not be training the neural networks here, but will simply upload their parameters from file.
-// The first trained neural network model was obtained by me writing the whole supervised learning
-// machinery in Java from scratch, and the second was obtained with use of PyTorch machine learning package.
-// If you are interested in how I trained these two neural networks, check out this project:
+// The trained neural network model was obtained by me writing the whole supervised learning machinery in Java
+// from scratch. If you are interested in how I trained these two neural networks, check out this project:
 // My implementation from scratch in Java: https://github.com/RusFortunat/java_ML_library
-// Python PyTorch and my C++ implementation: https://github.com/RusFortunat/alternative-ML-lib-C2plus
 
 package com.guessNumbersWithAI.model;
 
@@ -13,12 +11,10 @@ import java.util.Scanner;
 
 public class NeuralNetwork {
 
-    // I have two trained networks, and this parameter determines which of them the user will use
-    public String chosenNetworkModel;
-
     private int inputSize;
     private int hiddenSize;
     private int outputSize;
+    private double[] outputVector;
 
     // the neural network parameters that will be loaded from the file
     private double[][] firstLayerWeights;
@@ -33,11 +29,11 @@ public class NeuralNetwork {
     // I will let the user to choose which neural network to use and load parameters later
     public NeuralNetwork() {
 
-        this.chosenNetworkModel = "";
-
         this.inputSize = 28*28; // MNIST training images are of 28x28 pixel size
         this.hiddenSize = 256; // arbitrary, should not be too small or too big
         this.outputSize = 10; // 0-9 digits that network will be guessing
+        this.outputVector = new double[outputSize];
+
         this.firstLayerWeights = new double[hiddenSize][inputSize];
         this.firstLayerBiases = new double[hiddenSize];
         this.secondLayerWeights = new double[outputSize][hiddenSize];
@@ -55,7 +51,6 @@ public class NeuralNetwork {
         // 3. Repeat 1.-2. for the next layer with secondLayerWeights and secondLayerBiases to get the [output] vector.
 
         double[] hiddenVector = new double[hiddenSize];
-        double[] outputVector = new double[outputSize];
 
         // compute hidden activation values
         for(int i = 0; i < hiddenSize; i++){
@@ -67,7 +62,7 @@ public class NeuralNetwork {
             hiddenVector[i] = sum;
         }
         // compute output activations
-        double totalSum = 0.0;
+        double smallestValue = 0.0; // sum of activations can be negative
         for(int i = 0; i < outputSize; i++){
             double sum = 0;
             for(int j = 0; j < hiddenSize; j++){
@@ -75,13 +70,10 @@ public class NeuralNetwork {
                 sum+= activation; // no relu on output values
             }
             outputVector[i] = sum;
-            totalSum += Math.exp(sum);
-        }
 
-        // normalize the output vector using the SoftMax approach;
-        // i will keep it for future, if i'll need the whole vector
-        for(int i = 0; i < outputSize; i++){
-            outputVector[i] = Math.exp(outputVector[i]) / totalSum;
+            if(sum < smallestValue){
+                smallestValue = sum;
+            }
         }
 
         // return the index (which also represents the number) of the output vector with the highest value
@@ -91,6 +83,37 @@ public class NeuralNetwork {
             if(outputVector[i] > maxValue){
                 maxId = i;
                 maxValue = outputVector[i];
+            }
+        }
+
+        // if one of the values is negative, shift the entire vector
+        System.out.println("output vector before softmax:");
+        double totalSum = 0;
+        for(int i = 0; i < outputSize; i++){
+            if(smallestValue < 0) outputVector[i] += Math.abs(smallestValue);
+            totalSum += outputVector[i];
+        }
+
+        // normalize the output vector
+        for(int i = 0; i < outputSize; i++){
+            outputVector[i] =outputVector[i] / totalSum;
+        }
+
+        // now let's magnify the difference between the output values,
+        // so that we can have clear visual effect on html page
+        maxValue = outputVector[maxId];
+        double highConfidenceValue = 0.9*maxValue;
+        double mediumConfidenceValue = 0.5*maxValue;
+        double lowConfidenceValue = 0.3*maxValue;
+        for(int i = 0; i < outputSize; i++){
+            if(outputVector[i] > highConfidenceValue){
+                outputVector[i] = Math.min(1.0, 4*outputVector[i]); // opacity is capped at 1.0
+            }
+            else if(outputVector[i] > mediumConfidenceValue){
+                outputVector[i] = Math.min(1.0, 3*outputVector[i]); // opacity is capped at 1.0
+            }
+            else if(outputVector[i] > lowConfidenceValue){
+                outputVector[i] = Math.min(1.0, 3*outputVector[i]); // opacity is capped at 1.0
             }
         }
 
@@ -151,20 +174,20 @@ public class NeuralNetwork {
 
     // getters and setters
 
-    public String getChosenNetworkModel() {
-        return chosenNetworkModel;
-    }
-
-    public void setChosenNetworkModel(String chosenNetworkModel) {
-        this.chosenNetworkModel = chosenNetworkModel;
-    }
-
     public int getAnswer() {
         return answer;
     }
 
     public void setAnswer(int answer) {
         this.answer = answer;
+    }
+
+    public double[] getOutputVector() {
+        return outputVector;
+    }
+
+    public void setOutputVector(double[] outputVector) {
+        this.outputVector = outputVector;
     }
 
     // printers, for debug purposes
