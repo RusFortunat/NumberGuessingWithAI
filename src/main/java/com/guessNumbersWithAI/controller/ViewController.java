@@ -41,7 +41,7 @@ public class ViewController {
             double[] inputVector = drawnImages.processRawInput();
 
             // load network parameters from the file
-            Resource resource= resourceLoader.getResource(
+            Resource resource = resourceLoader.getResource(
                     "classpath:net_params_size784_256_10_lr0.001_trainEps100.txt");
             InputStream inputStream = resource.getInputStream();
             ourNeuralNetwork.loadNetworkParameters(inputStream);

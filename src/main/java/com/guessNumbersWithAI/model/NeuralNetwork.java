@@ -5,15 +5,18 @@
 
 package com.guessNumbersWithAI.model;
 
+import org.springframework.stereotype.Component;
+
 import java.io.File;
 import java.io.InputStream;
 import java.util.Scanner;
 
+@Component
 public class NeuralNetwork {
 
-    private int inputSize;
-    private int hiddenSize;
-    private int outputSize;
+    private int inputSize = 28*28; // MNIST training images are of 28x28 pixel size
+    private int hiddenSize = 256; // arbitrary, should not be too small or too big
+    private int outputSize = 10; // 0-9 digits that network will be guessing
     private double[] outputVector;
 
     // the neural network parameters that will be loaded from the file
@@ -29,9 +32,6 @@ public class NeuralNetwork {
     // I will let the user to choose which neural network to use and load parameters later
     public NeuralNetwork() {
 
-        this.inputSize = 28*28; // MNIST training images are of 28x28 pixel size
-        this.hiddenSize = 256; // arbitrary, should not be too small or too big
-        this.outputSize = 10; // 0-9 digits that network will be guessing
         this.outputVector = new double[outputSize];
 
         this.firstLayerWeights = new double[hiddenSize][inputSize];
@@ -87,7 +87,6 @@ public class NeuralNetwork {
         }
 
         // if one of the values is negative, shift the entire vector
-        System.out.println("output vector before softmax:");
         double totalSum = 0;
         for(int i = 0; i < outputSize; i++){
             if(smallestValue < 0) outputVector[i] += Math.abs(smallestValue);
@@ -95,8 +94,10 @@ public class NeuralNetwork {
         }
 
         // normalize the output vector
-        for(int i = 0; i < outputSize; i++){
-            outputVector[i] =outputVector[i] / totalSum;
+        if(totalSum != 0){
+            for(int i = 0; i < outputSize; i++){
+                outputVector[i] =outputVector[i] / totalSum;
+            }
         }
 
         // now let's magnify the difference between the output values,
@@ -190,6 +191,86 @@ public class NeuralNetwork {
         this.outputVector = outputVector;
     }
 
+    public int getInputSize() {
+        return inputSize;
+    }
+
+    public void setInputSize(int inputSize) {
+        this.inputSize = inputSize;
+    }
+
+    public int getHiddenSize() {
+        return hiddenSize;
+    }
+
+    public void setHiddenSize(int hiddenSize) {
+        this.hiddenSize = hiddenSize;
+    }
+
+    public int getOutputSize() {
+        return outputSize;
+    }
+
+    public void setOutputSize(int outputSize) {
+        this.outputSize = outputSize;
+    }
+
+    public double[][] getFirstLayerWeights() {
+        return firstLayerWeights;
+    }
+
+    public void setFirstLayerWeights(double[][] firstLayerWeights) {
+        this.firstLayerWeights = firstLayerWeights;
+    }
+
+    public double[] getFirstLayerBiases() {
+        return firstLayerBiases;
+    }
+
+    public void setFirstLayerBiases(double[] firstLayerBiases) {
+        this.firstLayerBiases = firstLayerBiases;
+    }
+
+    public double[][] getSecondLayerWeights() {
+        return secondLayerWeights;
+    }
+
+    public void setSecondLayerWeights(double[][] secondLayerWeights) {
+        this.secondLayerWeights = secondLayerWeights;
+    }
+
+    public double[] getSecondLayerBiases() {
+        return secondLayerBiases;
+    }
+
+    public void setSecondLayerBiases(double[] secondLayerBiases) {
+        this.secondLayerBiases = secondLayerBiases;
+    }
+
+    // set random parameters, for testing purposes
+    public void setRandomNetworkParameters(){
+        for(int i = 0; i < hiddenSize; i++){
+            for(int j = 0; j < inputSize; j++) {
+                firstLayerWeights[i][j] = Math.random();
+            }
+        }
+
+        for(int i = 0; i < hiddenSize; i++){
+            firstLayerBiases[i] = Math.random();
+        }
+
+        for(int i = 0; i < outputSize; i++){
+            for(int j = 0; j < hiddenSize; j++) {
+                secondLayerWeights[i][j] = Math.random();
+            }
+        }
+
+        for(int i = 0; i < outputSize; i++){
+            secondLayerBiases[i] = Math.random();
+        }
+    }
+
+
     // printers, for debug purposes
     public void printNetworkParameteres(){
         System.out.println("firstLayerWeights:");
@@ -218,5 +299,4 @@ public class NeuralNetwork {
         }
         System.out.println("\n");
     }
-
 }
