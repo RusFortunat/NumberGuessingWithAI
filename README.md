@@ -8,7 +8,7 @@ A Spring Boot MVC web application that uses a pre-trained neural network to gues
 
 ## Model
 
-The app uses a pre-trained neural network to process user image and produce the answer. The neural networks was trained on MNIST handwritten digits datasets with use of a [Machine Learning package](https://github.com/RusFortunat/java_ML_library) that I have written myself in Java. The network's guessing accuracy is about 89%: it guesses well 0-5 digits, and almost never guesses 7 correctly.. For better results, try drawing numbers in the middle of the drawing field and avoid touching the borders.
+The app uses a pre-trained neural network to process user image and produce the answer. The neural networks was trained on MNIST handwritten digits datasets with use of a [Machine Learning package](https://github.com/RusFortunat/java_ML_library) that I have written myself in Java. The network's guessing accuracy is about 89%. For better results, try drawing numbers in the middle of the drawing field and avoid touching the borders.
 
 
 ## View
