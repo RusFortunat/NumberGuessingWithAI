@@ -124,4 +124,22 @@ public class DrawnImages {
 
         return conn;
     }
+
+
+    // getters and setters (for testing)
+    public double[] getRawPixelInput() {
+        return rawPixelInput;
+    }
+
+    public void setRawPixelInput(double[] rawPixelInput) {
+        this.rawPixelInput = rawPixelInput;
+    }
+
+    public double[] getInputVector() {
+        return inputVector;
+    }
+
+    public void setInputVector(double[] inputVector) {
+        this.inputVector = inputVector;
+    }
 }
